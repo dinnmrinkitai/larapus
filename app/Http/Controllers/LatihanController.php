@@ -10,7 +10,7 @@ class LatihanController extends Controller
     public function __construct()
     {
     	//Midddleware untuk semua method
-    	$this->midddleware('auth');
+    	$this->middleware('auth');
     }
     public function index()
     {
