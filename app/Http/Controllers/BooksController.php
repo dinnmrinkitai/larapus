@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Books;
+use Illuminate\Support\Facades\Session;
+use App\Book;
 use Yajra\Datatables\Html\Builder;
 use Yajra\Datatables\Datatables;
 
@@ -113,6 +114,8 @@ class BooksController extends Controller
     public function edit($id)
     {
         //
+        $book = Book::find($id);
+        return view('books.edit')->with(compact('book'));
     }
 
     /**
