@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Be right back.</title>
+        <title>No Access.</title>
 
-        <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300" rel="stylesheet" type="text/css">
 
         <style>
             html, body {
@@ -16,8 +16,8 @@
                 width: 100%;
                 color: #B0BEC5;
                 display: table;
-                font-weight: 100;
-                font-family: 'Lato', sans-serif;
+                font-weight: 300;
+                font-family: 'Souce Sans Pro';
             }
 
             .container {
@@ -40,7 +40,9 @@
     <body>
         <div class="container">
             <div class="content">
-                <div class="title">Be right back.</div>
+                <div class="title">:(</div>
+                <p>Maaf, Anda tidak Memiliki Akses untuk Fitur ini.</p>
+                <p><a href="{{ url('/') }}">Kembali ke Halaman Awal</a></p>
             </div>
         </div>
     </body>
