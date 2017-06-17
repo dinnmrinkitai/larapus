@@ -58,14 +58,9 @@ class BooksController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreBookRequest $request)
     {
         //
-        $this->validate($request, [
-            'title'     =>'required|unique:books,title',
-            'author_id' =>'required|exists:authors,id',
-            'amount'    =>'required|numeric',
-            'cover'     =>'image|max:2048']);
 
         $book = Book::create($request->except('cover'));
 
@@ -125,10 +120,48 @@ class BooksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateBookRequest $request, $id)
     {
         //
-    }
+
+        $book = Book::find($id);
+        $book->update($request->all());
+
+        if($request->hasFile('cover')) {
+            //Mengambil Cover yang Diupload berikut Ekstensinya
+            $filename = null;
+            $uploaded_cover = $request->file('cover');
+            $extension = $uploaded_cover->getClientOriginalExtension();
+
+            //Membuat Nama File Random dengan Extention
+            $filename = md5(time()).'.'.$extension;
+            $destinationPath = public_path() . DIRECTORY_SEPARATOR. 'img';
+
+            //Memindahkan File ke Folder Public/img
+            $uploaded_cover->move($destinationPath, $filename);
+
+            //Hapus Cover Lama,jika ada
+            if ($book->cover) {
+                $old_cover = $book->cover;
+                $filepath = public_path().DIRECTORY_SEPARATOR. 'img' .DIRECTORY_SEPARATOR. $book->cover;
+
+                try{
+                    File::delete($filepath);
+                } catch (FileNotFoundException $e) {
+                    //File sudah Dihapus/tidak ada
+                }
+            }
+
+            //Ganti Field Cover dengan Cover yang Baru
+            $book->cover = $filename;
+            $book->save();
+            }
+
+            Session::flash("flash_notification",["level"=>"success","message"=>"Berhasil Menyimpan $book->title"]);
+
+            return redirect()->route('books.index');
+        }
+    
 
     /**
      * Remove the specified resource from storage.
@@ -138,6 +171,25 @@ class BooksController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $book = Book::find($id);
+
+        //Hapus Cover Lama,Jika ada
+        if ($book->cover) {
+                $old_cover = $book->cover;
+                $filepath = public_path().DIRECTORY_SEPARATOR. 'img' .DIRECTORY_SEPARATOR. $book->cover;
+
+                try{
+                    File::delete($filepath);
+                } catch (FileNotFoundException $e) {
+                    //File sudah Dihapus/tidak ada
+                }
+            }
+
+            $book->delete();
+
+            Session::flash("flash_notification",["level"=>"success","message"=>"Buku Berhasil Dihapus"]);
+
+            return redirect()->route('books.index');
+        }
     }
-}
+
